@@ -253,7 +253,11 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
                   ),
                   child: const Text(
                     "إرسال الطلب",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -281,7 +285,7 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
     required Function(String?) onChanged,
     required String? Function(String?) validator,
   }) {
-    return Container(
+    return SizedBox(
       height: 60, // ارتفاع ثابت لتجنب التجاوز
       child: DropdownButtonFormField<String>(
         isExpanded: true, // تأكد من توسيع العنصر لملء المساحة المتاحة
