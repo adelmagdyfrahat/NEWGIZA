@@ -44,7 +44,7 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
   final TextEditingController requestController = TextEditingController();
 
   final Map<String, String> districtWhatsAppNumbers = {
-    "حي الدقي": "+201110532501",
+    "حي الدقي": "+201152413091",
     "حي العجوزة": "+201120420142",
     "حي الهرم": "+201110532501",
     "حي بولاق الدكرور": "+201110532501",
@@ -96,6 +96,7 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('تم إرسال الطلب بنجاح')),
             );
+            clearForm(); // مسح النموذج بعد الإرسال
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('تعذر إرسال الطلب إلى الإدارة')),
@@ -121,6 +122,20 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
     } else {
       return false;
     }
+  }
+
+  void clearForm() {
+    // مسح الحقول
+    nameController.clear();
+    idController.clear();
+    phoneController.clear();
+    requestController.clear();
+
+    // إعادة تعيين القيم المحددة
+    setState(() {
+      selectedDistrict = null;
+      selectedRequestType = null;
+    });
   }
 
   @override
@@ -153,7 +168,7 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
                   height: 120,
                   fit: BoxFit.contain,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 _buildDropdown(
                   hint: "اختر الحي أو المركز",
                   items: districtWhatsAppNumbers.keys.toList(),
@@ -162,14 +177,14 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
                   validator:
                       (value) => value == null ? "اختر الحي أو المركز" : null,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 10), // زيادة التباعد
                 _buildTextField(
                   controller: nameController,
                   label: "اسم صاحب الطلب",
                   validator:
                       (value) => value!.isEmpty ? "يرجى إدخال الاسم" : null,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 10), // زيادة التباعد
                 _buildTextField(
                   controller: idController,
                   label: "الرقم القومي",
@@ -180,7 +195,7 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
                       (value) =>
                           value!.length != 14 ? "يجب أن يكون 14 رقمًا" : null,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 0), // زيادة التباعد
                 _buildTextField(
                   controller: phoneController,
                   label: "رقم الهاتف",
@@ -193,7 +208,7 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
                               ? "رقم هاتف غير صالح"
                               : null,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 0), // زيادة التباعد
                 _buildDropdown(
                   hint: "اختر طبيعة الطلب",
                   items: requestTypes,
@@ -201,7 +216,7 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
                       (value) => setState(() => selectedRequestType = value),
                   validator: (value) => value == null ? "اختر نوع الطلب" : null,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 10), // زيادة التباعد
                 _buildTextField(
                   controller: requestController,
                   label: "مضمون الطلب / الشكوى",
@@ -210,7 +225,7 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
                   validator:
                       (value) => value!.isEmpty ? "يرجى إدخال التفاصيل" : null,
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
                     showDialog(
@@ -260,7 +275,7 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 const Center(
                   child: Text(
                     "Powered by: Adel Magdy",
@@ -289,12 +304,20 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
       height: 60, // ارتفاع ثابت لتجنب التجاوز
       child: DropdownButtonFormField<String>(
         isExpanded: true, // تأكد من توسيع العنصر لملء المساحة المتاحة
-        hint: Text(hint, style: const TextStyle(fontSize: 16)),
+        hint: Text(
+          hint,
+          style: const TextStyle(fontSize: 16),
+          textAlign: TextAlign.center, // جعل النص في المنتصف
+        ),
         items:
             items.map((item) {
               return DropdownMenuItem<String>(
                 value: item,
-                child: Text(item, style: const TextStyle(fontSize: 16)),
+                child: Text(
+                  item,
+                  style: const TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center, // جعل النص في المنتصف
+                ),
               );
             }).toList(),
         onChanged: onChanged,
@@ -303,6 +326,10 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           filled: true,
           fillColor: Colors.grey[200],
+          contentPadding: EdgeInsets.symmetric(
+            vertical: 15,
+            horizontal: 30,
+          ), // تباعد داخلي
         ),
       ),
     );
@@ -323,13 +350,23 @@ class _GizaServiceScreenState extends State<GizaServiceScreen> {
       inputFormatters: inputFormatters,
       maxLength: maxLength,
       maxLines: maxLines,
-      textAlign: TextAlign.right,
+      textAlign: TextAlign.right, // جعل النص المدخل يبدأ من اليمين
       style: const TextStyle(fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ), // تحسين نمط العنوان
+        alignLabelWithHint: true, // محاذاة العنوان مع النص
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         filled: true,
         fillColor: Colors.grey[200],
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 15,
+          horizontal: 30,
+        ), // تباعد داخلي
       ),
       validator: validator,
     );
